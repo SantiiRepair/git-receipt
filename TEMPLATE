@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://git-receipt.com/assets/root-DZvwv-fE.css"
+      rel="stylesheet"
+      type="text/css"
+      media="all"
+    />
+    <style>
+      .receipt-container {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        font-family: "Courier New", monospace;
+        background: transparent;
+      }
+
+      .coffee-stain {
+        position: absolute;
+        top: 20%;
+        right: 10%;
+        width: 60px;
+        height: 80px;
+        background: rgba(210, 180, 140, 0.1);
+        border-radius: 50%;
+        transform: rotate(15deg);
+        z-index: 1;
+      }
+
+      .receipt-content {
+        position: relative;
+        max-width: 320px;
+        background: white;
+        color: black;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 2;
+        border: 1px solid #e5e5e5;
+      }
+
+      .receipt-fade {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: linear-gradient(transparent, white);
+        pointer-events: none;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      .border-t {
+        border-top: 1px dashed #000;
+      }
+
+      .border-b {
+        border-bottom: 1px dashed #000;
+      }
+
+      .border-dashed {
+        border-style: dashed;
+      }
+
+      .opacity-75 {
+        opacity: 0.75;
+      }
+
+      .font-bold {
+        font-weight: bold;
+      }
+
+      .w-full {
+        width: 100%;
+      }
+
+      .text-right {
+        text-align: right;
+      }
+
+      .flex {
+        display: flex;
+      }
+
+      .justify-between {
+        justify-content: space-between;
+      }
+
+      .mb-4 {
+        margin-bottom: 1rem;
+      }
+
+      .mb-6 {
+        margin-bottom: 1.5rem;
+      }
+
+      .py-3 {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+      }
+
+      .pt-3 {
+        padding-top: 0.75rem;
+      }
+
+      .pt-4 {
+        padding-top: 1rem;
+      }
+
+      .p-4 {
+        padding: 1rem;
+      }
+
+      .mt-1 {
+        margin-top: 0.25rem;
+      }
+
+      .mt-2 {
+        margin-top: 0.5rem;
+      }
+
+      .leading-relaxed {
+        line-height: 1.625;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      td {
+        padding: 2px 0;
+        font-size: 11px;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+      }
+
+      .user-info {
+        font-size: 10px;
+        opacity: 0.8;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="receipt-container" bis_skin_checked="1">
+      <div class="coffee-stain" bis_skin_checked="1"></div>
+      <div
+        class="receipt-content w-full max-w-[88mm] bg-white text-black"
+        bis_skin_checked="1"
+      >
+        <div
+          class="p-4 sm:p-6 font-mono text-[11px] sm:text-xs leading-relaxed"
+          bis_skin_checked="1"
+        >
+          <div class="text-center mb-6" bis_skin_checked="1">
+            <h2 class="text-base sm:text-lg font-bold">GITHUB RECEIPT</h2>
+            <p>{{.FormattedDate}}</p>
+            <p class="mt-1 opacity-75">ORDER # {{.OrderNumber}}</p>
+          </div>
+          <div class="mb-4" bis_skin_checked="1">
+            <p>CUSTOMER: {{.CustomerName}}</p>
+            <p class="opacity-75">@{{.Username}}</p>
+          </div>
+          <div
+            class="border-t border-b border-dashed py-3 mb-4"
+            bis_skin_checked="1"
+          >
+            <table class="w-full">
+              <tbody>
+                <tr>
+                  <td>REPOSITORIES</td>
+                  <td class="text-right">{{.PublicRepos}}</td>
+                </tr>
+                <tr>
+                  <td>STARS EARNED</td>
+                  <td class="text-right">{{.TotalStars}}</td>
+                </tr>
+                <tr>
+                  <td>REPO FORKS</td>
+                  <td class="text-right">{{.TotalForks}}</td>
+                </tr>
+                <tr>
+                  <td>FOLLOWERS</td>
+                  <td class="text-right">{{.Followers}}</td>
+                </tr>
+                <tr>
+                  <td>FOLLOWING</td>
+                  <td class="text-right">{{.Following}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mb-4" bis_skin_checked="1">
+            <p>TOP LANGUAGES:</p>
+            <p>{{.TopLanguages}}</p>
+          </div>
+          <div class="border-t border-dashed pt-3 mb-4" bis_skin_checked="1">
+            <div class="flex justify-between" bis_skin_checked="1">
+              <span>MOST ACTIVE DAY:</span>
+              <span>{{.MostActiveDay}}</span>
+            </div>
+            <div class="flex justify-between" bis_skin_checked="1">
+              <span>COMMITS (30d):</span>
+              <span>{{.Commits30d}}</span>
+            </div>
+            <div
+              class="flex justify-between font-bold mt-2"
+              bis_skin_checked="1"
+            >
+              <span>CONTRIBUTION SCORE:</span>
+              <span>{{.ContributionScore}}</span>
+            </div>
+          </div>
+          <div class="text-center opacity-75 mb-4" bis_skin_checked="1">
+            <p>Served by: {{.ServerName}}</p>
+            <p>{{.TimeString}}</p>
+          </div>
+          <div
+            class="border-t border-dashed pt-4 mb-4 text-center"
+            bis_skin_checked="1"
+          >
+            <p>COUPON CODE: {{.CouponCode}}</p>
+            <p class="text-xs opacity-75">Save for your next commit!</p>
+          </div>
+          <div class="mb-6 opacity-75" bis_skin_checked="1">
+            <p>CARD #: **** **** **** {{.CardYear}}</p>
+            <p>AUTH CODE: {{.AuthCode}}</p>
+            <p>CARDHOLDER: {{.Username}}</p>
+          </div>
+          <div class="text-center" bis_skin_checked="1">
+            <p class="mb-4">THANK YOU FOR CODING!</p>
+            <div class="w-full h-10" bis_skin_checked="1">
+              <svg
+                class="w-full"
+                width="308px"
+                height="60px"
+                x="0px"
+                y="0px"
+                viewBox="0 0 308 60"
+                xmlns="http://www.w3.org/2000/svg"
+                version="1.1"
+                style="transform: translate(0, 0)"
+              >
+                <rect
+                  x="0"
+                  y="0"
+                  width="308"
+                  height="60"
+                  style="fill: #ffffff"
+                ></rect>
+                <g transform="translate(10, 10)" style="fill: #000000">
+                  <rect x="0" y="0" width="2" height="40"></rect>
+                  <rect x="3" y="0" width="1" height="40"></rect>
+                  <rect x="6" y="0" width="1" height="40"></rect>
+                  <rect x="11" y="0" width="1" height="40"></rect>
+                  <rect x="14" y="0" width="2" height="40"></rect>
+                  <rect x="17" y="0" width="1" height="40"></rect>
+                  <rect x="22" y="0" width="1" height="40"></rect>
+                  <rect x="27" y="0" width="2" height="40"></rect>
+                  <rect x="30" y="0" width="1" height="40"></rect>
+                  <rect x="33" y="0" width="1" height="40"></rect>
+                  <rect x="36" y="0" width="4" height="40"></rect>
+                  <rect x="41" y="0" width="1" height="40"></rect>
+                  <rect x="44" y="0" width="1" height="40"></rect>
+                  <rect x="47" y="0" width="2" height="40"></rect>
+                  <rect x="53" y="0" width="1" height="40"></rect>
+                  <rect x="55" y="0" width="1" height="40"></rect>
+                  <rect x="58" y="0" width="4" height="40"></rect>
+                  <rect x="64" y="0" width="1" height="40"></rect>
+                  <rect x="66" y="0" width="1" height="40"></rect>
+                  <rect x="69" y="0" width="1" height="40"></rect>
+                  <rect x="74" y="0" width="2" height="40"></rect>
+                  <rect x="77" y="0" width="1" height="40"></rect>
+                  <rect x="80" y="0" width="2" height="40"></rect>
+                  <rect x="84" y="0" width="3" height="40"></rect>
+                  <rect x="88" y="0" width="1" height="40"></rect>
+                  <rect x="93" y="0" width="1" height="40"></rect>
+                  <rect x="95" y="0" width="2" height="40"></rect>
+                  <rect x="99" y="0" width="1" height="40"></rect>
+                  <rect x="103" y="0" width="4" height="40"></rect>
+                  <rect x="108" y="0" width="1" height="40"></rect>
+                  <rect x="110" y="0" width="4" height="40"></rect>
+                  <rect x="115" y="0" width="3" height="40"></rect>
+                  <rect x="119" y="0" width="1" height="40"></rect>
+                  <rect x="121" y="0" width="1" height="40"></rect>
+                  <rect x="123" y="0" width="3" height="40"></rect>
+                  <rect x="128" y="0" width="2" height="40"></rect>
+                  <rect x="132" y="0" width="2" height="40"></rect>
+                  <rect x="135" y="0" width="3" height="40"></rect>
+                  <rect x="139" y="0" width="1" height="40"></rect>
+                  <rect x="143" y="0" width="1" height="40"></rect>
+                  <rect x="146" y="0" width="1" height="40"></rect>
+                  <rect x="148" y="0" width="2" height="40"></rect>
+                  <rect x="154" y="0" width="2" height="40"></rect>
+                  <rect x="160" y="0" width="1" height="40"></rect>
+                  <rect x="162" y="0" width="1" height="40"></rect>
+                  <rect x="165" y="0" width="1" height="40"></rect>
+                  <rect x="168" y="0" width="4" height="40"></rect>
+                  <rect x="173" y="0" width="1" height="40"></rect>
+                  <rect x="176" y="0" width="1" height="40"></rect>
+                  <rect x="181" y="0" width="2" height="40"></rect>
+                  <rect x="184" y="0" width="1" height="40"></rect>
+                  <rect x="187" y="0" width="1" height="40"></rect>
+                  <rect x="192" y="0" width="2" height="40"></rect>
+                  <rect x="195" y="0" width="1" height="40"></rect>
+                  <rect x="198" y="0" width="2" height="40"></rect>
+                  <rect x="203" y="0" width="1" height="40"></rect>
+                  <rect x="205" y="0" width="3" height="40"></rect>
+                  <rect x="209" y="0" width="1" height="40"></rect>
+                  <rect x="211" y="0" width="2" height="40"></rect>
+                  <rect x="215" y="0" width="1" height="40"></rect>
+                  <rect x="220" y="0" width="1" height="40"></rect>
+                  <rect x="222" y="0" width="1" height="40"></rect>
+                  <rect x="225" y="0" width="4" height="40"></rect>
+                  <rect x="231" y="0" width="1" height="40"></rect>
+                  <rect x="234" y="0" width="1" height="40"></rect>
+                  <rect x="236" y="0" width="2" height="40"></rect>
+                  <rect x="242" y="0" width="1" height="40"></rect>
+                  <rect x="247" y="0" width="2" height="40"></rect>
+                  <rect x="250" y="0" width="1" height="40"></rect>
+                  <rect x="253" y="0" width="1" height="40"></rect>
+                  <rect x="256" y="0" width="1" height="40"></rect>
+                  <rect x="259" y="0" width="4" height="40"></rect>
+                  <rect x="264" y="0" width="4" height="40"></rect>
+                  <rect x="269" y="0" width="1" height="40"></rect>
+                  <rect x="271" y="0" width="3" height="40"></rect>
+                  <rect x="275" y="0" width="2" height="40"></rect>
+                  <rect x="280" y="0" width="3" height="40"></rect>
+                  <rect x="284" y="0" width="1" height="40"></rect>
+                  <rect x="286" y="0" width="2" height="40"></rect>
+                </g>
+              </svg>
+            </div>
+            <p class="mt-2 opacity-75">github.com/{{.Username}}</p>
+          </div>
+        </div>
+        <div class="receipt-fade" bis_skin_checked="1"></div>
+      </div>
+    </div>
+  </body>
+</html>
