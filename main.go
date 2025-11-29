@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"math/rand"
 	"os"
 	"sort"
@@ -13,6 +14,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/google/go-github/v56/github"
+	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 )
 
@@ -65,6 +67,11 @@ var (
 )
 
 func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("⚠️ No .env file found, using system environment variables")
+	}
+
 	rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	token := os.Getenv("GITHUB_TOKEN")
@@ -273,7 +280,7 @@ func generateReceiptHTML(data ReceiptData) string {
 
 func main() {
 	if err := loadTemplate(); err != nil {
-		fmt.Printf("❌ Error loading template: %v\n", err)
+		log.Printf("❌ Error loading template: %v\n", err)
 		os.Exit(1)
 	}
 

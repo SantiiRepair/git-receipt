@@ -28,3 +28,6 @@ Gopkg.toml
 # Build artifacts
 /build/
 bin/
+
+.env
+*.sum

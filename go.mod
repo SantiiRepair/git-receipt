@@ -7,6 +7,7 @@ toolchain go1.24.10
 require (
 	github.com/gofiber/fiber/v2 v2.52.10
 	github.com/google/go-github/v56 v56.0.0
+	github.com/joho/godotenv v1.5.1
 	golang.org/x/oauth2 v0.33.0
 )
 
