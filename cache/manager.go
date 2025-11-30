@@ -20,6 +20,7 @@ func NewGitHubCacheManager(githubService *github.GitHubService) *GitHubCacheMana
 		BufferItems: 64,
 		Metrics:     true,
 	})
+	
 	if err != nil {
 		log.Fatalf("Failed to create cache: %v", err)
 	}
@@ -49,14 +50,9 @@ func (g *GitHubCacheManager) GetUserData(username string) (*CachedUserData, erro
 		cachedData := cached.(*CachedUserData)
 
 		if time.Since(cachedData.CachedAt) < cachedData.TTL {
-			log.Printf("✅ Cache HIT for user: %s", username)
 			return cachedData, nil
 		}
-
-		log.Printf("⚠️ Cache EXPIRED for user: %s", username)
 	}
-
-	log.Printf("🔍 Cache MISS for user: %s", username)
 
 	userData, err := g.fetchFreshUserData(username)
 	if err != nil {
@@ -71,19 +67,14 @@ func (g *GitHubCacheManager) GetUserData(username string) (*CachedUserData, erro
 
 	g.cache.SetWithTTL(username, userData, cost, userData.TTL)
 
-	log.Printf("💾 Cached user: %s for %v", username, userData.TTL)
-
 	return userData, nil
 }
 
 func (g *GitHubCacheManager) fetchFreshUserData(username string) (*CachedUserData, error) {
-	user, repos, err := g.githubService.GetUserAndRepos(username)
+	user, repos, mostActiveDay, totalStars, totalForks, topLanguages, commits30d, err := g.githubService.GetUserAndRepos(username)
 	if err != nil {
 		return nil, err
 	}
-
-	mostActiveDay := g.githubService.CalculateMostActiveDay(username)
-	totalStars, totalForks, topLanguages := g.githubService.CalculateStats(repos)
 
 	return &CachedUserData{
 		User:          user,
@@ -92,6 +83,7 @@ func (g *GitHubCacheManager) fetchFreshUserData(username string) (*CachedUserDat
 		TotalStars:    totalStars,
 		TotalForks:    totalForks,
 		TopLanguages:  topLanguages,
+		Commits30d:    commits30d,
 		CachedAt:      time.Now(),
 	}, nil
 }

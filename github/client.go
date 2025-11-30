@@ -2,6 +2,7 @@ package github
 
 import (
 	"context"
+	"os"
 	"sort"
 	"strings"
 	"time"
@@ -16,7 +17,8 @@ type GitHubService struct {
 }
 
 func NewGitHubService() *GitHubService {
-	token := ""
+	token := os.Getenv("GITHUB_TOKEN")
+
 	client := github.NewClient(nil)
 	withAuth := false
 
@@ -39,19 +41,23 @@ func (g *GitHubService) WithAuth() bool {
 	return g.withAuth
 }
 
-func (g *GitHubService) GetUserAndRepos(username string) (*GitHubUser, []GitHubRepo, error) {
+func (g *GitHubService) GetUserAndRepos(username string) (*GitHubUser, []GitHubRepo, string, int, int, string, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
 	user, _, err := g.client.Users.Get(ctx, username)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, "", 0, 0, "", 0, err
 	}
 
 	repos, err := g.fetchUserRepos(username)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, "", 0, 0, "", 0, err
 	}
+
+	mostActiveDay := g.calculateMostActiveDay(username, repos)
+	totalStars, totalForks, topLanguages := g.CalculateStats(repos)
+	commits30d := g.calculateCommits30d(username, repos)
 
 	gitHubUser := &GitHubUser{
 		Login:       user.GetLogin(),
@@ -66,7 +72,7 @@ func (g *GitHubService) GetUserAndRepos(username string) (*GitHubUser, []GitHubR
 		CachedAt:    time.Now(),
 	}
 
-	return gitHubUser, repos, nil
+	return gitHubUser, repos, mostActiveDay, totalStars, totalForks, topLanguages, commits30d, nil
 }
 
 func (g *GitHubService) fetchUserRepos(username string) ([]GitHubRepo, error) {
@@ -106,14 +112,9 @@ func (g *GitHubService) fetchUserRepos(username string) ([]GitHubRepo, error) {
 	return result, nil
 }
 
-func (g *GitHubService) CalculateMostActiveDay(username string) string {
+func (g *GitHubService) calculateMostActiveDay(username string, repos []GitHubRepo) string {
 	ctx, cancel := context.WithTimeout(context.Background(), 25*time.Second)
 	defer cancel()
-
-	repos, err := g.fetchUserRepos(username)
-	if err != nil {
-		return "Unknown"
-	}
 
 	dayCounts := make(map[string]int)
 	since := time.Now().AddDate(0, -3, 0)
@@ -153,6 +154,32 @@ func (g *GitHubService) CalculateMostActiveDay(username string) string {
 	}
 
 	return maxDay
+}
+
+func (g *GitHubService) calculateCommits30d(username string, repos []GitHubRepo) int {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	since := time.Now().AddDate(0, 0, -30)
+	totalCommits := 0
+
+	for _, repo := range repos {
+		commits, _, err := g.client.Repositories.ListCommits(ctx, username, repo.Name, &github.CommitsListOptions{
+			Author: username,
+			Since:  since,
+			ListOptions: github.ListOptions{
+				PerPage: 100,
+			},
+		})
+
+		if err != nil {
+			continue
+		}
+
+		totalCommits += len(commits)
+	}
+
+	return totalCommits
 }
 
 func (g *GitHubService) CalculateStats(repos []GitHubRepo) (int, int, string) {

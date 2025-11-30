@@ -46,7 +46,7 @@ func (h *ReceiptHandler) GenerateReceipt(username string) (string, error) {
 		Following:         user.Following,
 		TopLanguages:      cachedData.TopLanguages,
 		MostActiveDay:     cachedData.MostActiveDay,
-		Commits30d:        rand.Intn(91) + 10,
+		Commits30d:        cachedData.Commits30d,
 		ContributionScore: contributionScore,
 		ServerName:        h.servers[rand.Intn(len(h.servers))],
 		TimeString:        now.Format("3:04:05 PM"),
