@@ -12,8 +12,11 @@ import (
 func SetupRoutes(app *fiber.App, receiptHandler *ReceiptHandler, cacheManager *cache.GitHubCacheManager) {
 	githubService := github.NewGitHubService()
 
-	app.Get("/cache/metrics", func(c *fiber.Ctx) error {
-		return c.JSON(cacheManager.GetCacheMetrics())
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.Status(404).JSON(fiber.Map{
+			"message":           "Not Found",
+			"documentation_url": "https://github.com/SantiiRepair/git-receipt",
+		})
 	})
 
 	app.Get("/ping", func(c *fiber.Ctx) error {
@@ -29,6 +32,10 @@ func SetupRoutes(app *fiber.App, receiptHandler *ReceiptHandler, cacheManager *c
 			"github_api":  githubStatus,
 			"cache_stats": cacheManager.GetCacheMetrics(),
 		})
+	})
+
+	app.Get("/cache/metrics", func(c *fiber.Ctx) error {
+		return c.JSON(cacheManager.GetCacheMetrics())
 	})
 
 	app.Get("/:username", func(c *fiber.Ctx) error {

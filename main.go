@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 	"time"
@@ -43,9 +44,12 @@ func main() {
 
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: false,
-		AppName:               "GitHub Receipt Service",
+		AppName:               "GitHub Receipt",
 		ReadTimeout:           10 * time.Second,
 		WriteTimeout:          10 * time.Second,
+		JSONEncoder: func(v any) ([]byte, error) {
+			return json.MarshalIndent(v, "", "  ")
+		},
 	})
 
 	app.Use(cors.New(cors.Config{
