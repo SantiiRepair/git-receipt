@@ -12,7 +12,7 @@ So I decided to build my own version from scratch that:
 
 - Maintains the aesthetic I loved from the original
 - Works perfectly as an embeddable iframe
-- Includes smart caching to handle GitHub API limits
+- Includes smart caching to handle Github API limits
 - Is actively maintained and easy to deploy
 
 ## Features
