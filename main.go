@@ -32,7 +32,7 @@ func init() {
 }
 
 func main() {
-	templateContent, err := utils.LoadTemplate("TEMPLATE")
+	templateContent, err := utils.LoadTemplate("template.svg")
 	if err != nil {
 		log.Printf("❌ Error loading template: %v\n", err)
 		os.Exit(1)
