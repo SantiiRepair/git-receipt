@@ -32,8 +32,13 @@ So I decided to build my own version from scratch that:
 - Github token (optional, for higher API limits)
 
 ## Usage
+To use the Github receipt in your profile, simply embed it using the following format:
 
-To use the Github Receipt on your website, simply embed it using the following URL format:
+```md
+![SantiiRepair's Github stats](https://santiirepair.tail012146.ts.net/SantiiRepair)
+```
+
+or to use it on your website as an iframe:
 
 ```html
 <iframe
@@ -57,5 +62,9 @@ Replace :username with the Github username you want to display. For example:
 >
 </iframe>
 ```
+
+## Showcase
+
+![SantiiRepair's Github stats](https://santiirepair.tail012146.ts.net/SantiiRepair)
 
 Or if you want to see what it looks like, let's look at it using the [Octocat](https://github.com/octocat) as an [example](https://santiirepair.tail012146.ts.net/octocat).
