@@ -1,187 +1,90 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="320" height="700" viewBox="0 0 320 700" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="700" viewBox="0 0 320 700">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: "Courier New", monospace;
-            background: transparent;
-            line-height: 1;
-            overflow: hidden;
-        }
-        
-        .receipt-container {
-            position: relative;
-            width: 100%;
-            max-width: 320px;
-            margin: 0 auto;
-            background: white;
-            color: black;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e5e5;
-        }
-        
-        .coffee-stain {
-            position: absolute;
-            top: 20%;
-            right: 10%;
-            width: 60px;
-            height: 80px;
-            background: rgba(210, 180, 140, 0.1);
-            border-radius: 50%;
-            transform: rotate(15deg);
-            z-index: 1;
-        }
-        
-        .receipt-content {
-            position: relative;
-            padding: 1rem;
-            z-index: 2;
-        }
-        
-        .receipt-fade {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 50px;
-            background: linear-gradient(transparent, white);
-            pointer-events: none;
-        }
-        
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .font-bold { font-weight: bold; }
+        .receipt-bg { fill: #ffffff; }
+        .text { font-family: 'Courier New', Courier, monospace; }
+        .text-bold { font-weight: 700; }
+        .text-center { text-anchor: middle; }
+        .text-right { text-anchor: end; }
         .opacity-75 { opacity: 0.75; }
-        .w-full { width: 100%; }
-        .mb-4 { margin-bottom: 1rem; }
-        .mb-6 { margin-bottom: 1.5rem; }
-        .mt-1 { margin-top: 0.25rem; }
-        .mt-2 { margin-top: 0.5rem; }
-        .py-3 { padding: 0.75rem 0; }
-        .pt-3 { padding-top: 0.75rem; }
-        .pt-4 { padding-top: 1rem; }
-        
-        .border-t { border-top: 1px dashed #000; }
-        .border-b { border-bottom: 1px dashed #000; }
-        
-        .flex { display: flex; }
-        .justify-between { justify-content: space-between; }
-        
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        
-        td {
-            padding: 2px 0;
-            font-size: 11px;
-        }
-        
-        .barcode {
-            width: 100%;
-            height: 40px;
-            margin: 10px 0;
-            background: repeating-linear-gradient(
-                90deg,
-                #000,
-                #000 2px,
-                transparent 2px,
-                transparent 4px
-            );
-            background-size: 4px 100%;
-        }
+        .dashed-line { stroke: #000000; stroke-width: 1; stroke-dasharray: 3, 2; fill: none; }
+        .coffee-stain { fill: rgba(210, 180, 140, 0.1); }
+        .shadow { filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1)); }
+        .border { fill: none; stroke: #e5e5e5; stroke-width: 1; }
     </style>
     
-    <foreignObject x="0" y="0" width="320" height="700">
-        <div xmlns="http://www.w3.org/1999/xhtml" class="receipt-container">
-            <div class="coffee-stain"></div>
-            <div class="receipt-content">
-                <div class="text-center mb-6">
-                    <h2 class="font-bold">GITHUB RECEIPT</h2>
-                    <p>{{.FormattedDate}}</p>
-                    <p class="mt-1 opacity-75">ORDER # {{.OrderNumber}}</p>
-                </div>
-                
-                <div class="mb-4">
-                    <p>CUSTOMER: {{.CustomerName}}</p>
-                    <p class="opacity-75">@{{.Username}}</p>
-                </div>
-                
-                <div class="border-t border-b py-3 mb-4">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>REPOSITORIES</td>
-                                <td class="text-right">{{.PublicRepos}}</td>
-                            </tr>
-                            <tr>
-                                <td>STARS EARNED</td>
-                                <td class="text-right">{{.TotalStars}}</td>
-                            </tr>
-                            <tr>
-                                <td>REPO FORKS</td>
-                                <td class="text-right">{{.TotalForks}}</td>
-                            </tr>
-                            <tr>
-                                <td>FOLLOWERS</td>
-                                <td class="text-right">{{.Followers}}</td>
-                            </tr>
-                            <tr>
-                                <td>FOLLOWING</td>
-                                <td class="text-right">{{.Following}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="mb-4">
-                    <p>TOP LANGUAGES:</p>
-                    <p>{{.TopLanguages}}</p>
-                </div>
-                
-                <div class="border-t pt-3 mb-4">
-                    <div class="flex justify-between">
-                        <span>MOST ACTIVE DAY:</span>
-                        <span>{{.MostActiveDay}}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>COMMITS (30d):</span>
-                        <span>{{.Commits30d}}</span>
-                    </div>
-                    <div class="flex justify-between font-bold mt-2">
-                        <span>CONTRIBUTION SCORE:</span>
-                        <span>{{.ContributionScore}}</span>
-                    </div>
-                </div>
-                
-                <div class="text-center opacity-75 mb-4">
-                    <p>Served by: {{.ServerName}}</p>
-                    <p>{{.TimeString}}</p>
-                </div>
-                
-                <div class="border-t pt-4 mb-4 text-center">
-                    <p>COUPON CODE: {{.CouponCode}}</p>
-                    <p class="opacity-75">Save for your next commit!</p>
-                </div>
-                
-                <div class="mb-6 opacity-75">
-                    <p>CARD #: **** **** **** {{.CardYear}}</p>
-                    <p>AUTH CODE: {{.AuthCode}}</p>
-                    <p>CARDHOLDER: {{.Username}}</p>
-                </div>
-                
-                <div class="text-center">
-                    <p class="mb-4">THANK YOU FOR CODING!</p>
-                    <div class="barcode"></div>
-                    <p class="mt-2 opacity-75">github.com/{{.Username}}</p>
-                </div>
-            </div>
-            <div class="receipt-fade"></div>
-        </div>
-    </foreignObject>
+    <rect x="0" y="0" width="320" height="700" class="receipt-bg shadow"/>
+    <rect x="0" y="0" width="320" height="700" class="border"/>
+    
+    <ellipse cx="270" cy="140" rx="30" ry="40" transform="rotate(15 270 140)" class="coffee-stain"/>
+    
+    <text x="160" y="40" class="text text-bold text-center" font-size="16">GITHUB RECEIPT</text>
+    <text x="160" y="55" class="text text-center" font-size="11">{{.FormattedDate}}</text>
+    <text x="160" y="70" class="text text-center opacity-75" font-size="10">ORDER # {{.OrderNumber}}</text>
+    
+    <text x="20" y="95" class="text text-bold" font-size="12">CUSTOMER: {{.CustomerName}}</text>
+    <text x="20" y="110" class="text opacity-75" font-size="11">@{{.Username}}</text>
+    
+    <line x1="20" y1="125" x2="300" y2="125" class="dashed-line"/>
+    
+    <text x="20" y="145" class="text" font-size="11">REPOSITORIES</text>
+    <text x="300" y="145" class="text text-right" font-size="11">{{.PublicRepos}}</text>
+    
+    <text x="20" y="160" class="text" font-size="11">STARS EARNED</text>
+    <text x="300" y="160" class="text text-right" font-size="11">{{.TotalStars}}</text>
+    
+    <text x="20" y="175" class="text" font-size="11">REPO FORKS</text>
+    <text x="300" y="175" class="text text-right" font-size="11">{{.TotalForks}}</text>
+    
+    <text x="20" y="190" class="text" font-size="11">FOLLOWERS</text>
+    <text x="300" y="190" class="text text-right" font-size="11">{{.Followers}}</text>
+    
+    <text x="20" y="205" class="text" font-size="11">FOLLOWING</text>
+    <text x="300" y="205" class="text text-right" font-size="11">{{.Following}}</text>
+    
+    <line x1="20" y1="220" x2="300" y2="220" class="dashed-line"/>
+    
+    <text x="20" y="240" class="text text-bold" font-size="11">TOP LANGUAGES:</text>
+    <text x="20" y="255" class="text" font-size="11">{{.TopLanguages}}</text>
+    
+    <line x1="20" y1="275" x2="300" y2="275" class="dashed-line"/>
+    
+    <text x="20" y="295" class="text" font-size="11">MOST ACTIVE DAY:</text>
+    <text x="300" y="295" class="text text-right" font-size="11">{{.MostActiveDay}}</text>
+    
+    <text x="20" y="310" class="text" font-size="11">COMMITS (30d):</text>
+    <text x="300" y="310" class="text text-right" font-size="11">{{.Commits30d}}</text>
+    
+    <text x="20" y="330" class="text text-bold" font-size="11">CONTRIBUTION SCORE:</text>
+    <text x="300" y="330" class="text text-bold text-right" font-size="11">{{.ContributionScore}}</text>
+    
+    <text x="160" y="360" class="text text-center opacity-75" font-size="10">Served by: {{.ServerName}}</text>
+    <text x="160" y="375" class="text text-center opacity-75" font-size="10">{{.TimeString}}</text>
+    
+    <line x1="20" y1="395" x2="300" y2="395" class="dashed-line"/>
+    
+    <text x="160" y="415" class="text text-center text-bold" font-size="12">COUPON CODE: {{.CouponCode}}</text>
+    <text x="160" y="430" class="text text-center opacity-75" font-size="10">Save for your next commit!</text>
+    
+    <text x="20" y="460" class="text opacity-75" font-size="10">CARD #: **** **** **** {{.CardYear}}</text>
+    <text x="20" y="475" class="text opacity-75" font-size="10">AUTH CODE: {{.AuthCode}}</text>
+    <text x="20" y="490" class="text opacity-75" font-size="10">CARDHOLDER: {{.Username}}</text>
+    
+    <text x="160" y="520" class="text text-center text-bold" font-size="12">THANK YOU FOR CODING!</text>
+    
+    <rect x="60" y="530" width="200" height="40" fill="url(#barcodePattern)"/>
+    
+    <defs>
+        <pattern id="barcodePattern" patternUnits="userSpaceOnUse" width="4" height="40">
+            <rect x="0" y="0" width="2" height="40" fill="#000000"/>
+        </pattern>
+        
+        <linearGradient id="fadeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="1"/>
+        </linearGradient>
+    </defs>
+    
+    <rect x="0" y="600" width="320" height="100" fill="url(#fadeGradient)"/>
+    
+    <text x="160" y="580" class="text text-center opacity-75" font-size="10">github.com/{{.Username}}</text>
 </svg>
