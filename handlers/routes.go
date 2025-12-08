@@ -50,7 +50,7 @@ func SetupRoutes(app *fiber.App, receiptHandler *ReceiptHandler, cacheManager *c
 			return c.Status(404).SendString(fmt.Sprintf("User '%s' not found: %v", username, err))
 		}
 
-		c.Set("Content-Type", "text/html; charset=utf-8")
+		c.Set("Content-Type", "image/svg+xml; charset=utf-8")
 		c.Set("Cache-Control", "public, max-age=300")
 		c.Set("X-Cache-Status", "HIT")
 
