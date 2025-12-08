@@ -6,7 +6,8 @@ A receipt-style Github receipt designed to work perfectly as an embeddable ifram
 
 I discovered git-receipt.com and absolutely loved the concept of displaying Github stats in a creative, receipt-style format. However, when I tried to embed it on my personal website as an iframe, it didn't work as expected.
 
-According to the official website, the original repository was at [gitreceipt](https://github.com/ankitkr0/gitreceipt), but it appears the creator has either deleted their profile or changed their username, making the original project inaccessible.
+> [!IMPORTANT]
+> According to the official website, the original repository was at [gitreceipt](https://github.com/ankitkr0/gitreceipt), but it appears the creator has either deleted their profile or changed their username, making the original project inaccessible.
 
 So I decided to build my own version from scratch that:
 
