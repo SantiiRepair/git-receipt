@@ -11,83 +11,71 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type GitHubService struct {
-	client   *github.Client
-	withAuth bool
+type Service struct {
+	client *github.Client
+	authed bool
 }
 
-func NewGitHubService() *GitHubService {
-	token := os.Getenv("GITHUB_TOKEN")
-
+func NewService() *Service {
 	client := github.NewClient(nil)
-	withAuth := false
+	authed := false
 
-	if token != "" {
-		ts := oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: token},
-		)
-		tc := oauth2.NewClient(context.Background(), ts)
-		client = github.NewClient(tc)
-		withAuth = true
+	if token := os.Getenv("GITHUB_TOKEN"); token != "" {
+		ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
+		client = github.NewClient(oauth2.NewClient(context.Background(), ts))
+		authed = true
 	}
 
-	return &GitHubService{
-		client:   client,
-		withAuth: withAuth,
-	}
+	return &Service{client: client, authed: authed}
 }
 
-func (g *GitHubService) WithAuth() bool {
-	return g.withAuth
-}
-
-func (g *GitHubService) GetUserAndRepos(username string) (*GitHubUser, []GitHubRepo, string, int, int, string, int, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+func (s *Service) GetUserStats(username string) (*User, *Stats, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	user, _, err := g.client.Users.Get(ctx, username)
+	user, _, err := s.client.Users.Get(ctx, username)
 	if err != nil {
-		return nil, nil, "", 0, 0, "", 0, err
+		return nil, nil, err
 	}
 
-	repos, err := g.fetchUserRepos(username)
+	repos, err := s.getRepos(ctx, username)
 	if err != nil {
-		return nil, nil, "", 0, 0, "", 0, err
+		return nil, nil, err
 	}
 
-	mostActiveDay := g.calculateMostActiveDay(username, repos)
-	totalStars, totalForks, topLanguages := g.CalculateStats(repos)
-	commits30d := g.calculateCommits30d(username, repos)
+	statsChan := make(chan *Stats, 1)
+	go func() {
+		statsChan <- s.calcStats(ctx, username, repos)
+	}()
 
-	gitHubUser := &GitHubUser{
+	gitUser := &User{
 		Login:       user.GetLogin(),
 		Name:        user.GetName(),
-		PublicRepos: user.GetPublicRepos(),
-		Followers:   user.GetFollowers(),
-		Following:   user.GetFollowing(),
 		Bio:         user.GetBio(),
 		Location:    user.GetLocation(),
+		Followers:   user.GetFollowers(),
+		Following:   user.GetFollowing(),
+		PublicRepos: user.GetPublicRepos(),
 		CreatedAt:   user.GetCreatedAt().Time,
 		HTMLURL:     user.GetHTMLURL(),
 		CachedAt:    time.Now(),
 	}
 
-	return gitHubUser, repos, mostActiveDay, totalStars, totalForks, topLanguages, commits30d, nil
+	stats := <-statsChan
+	return gitUser, stats, nil
 }
 
-func (g *GitHubService) fetchUserRepos(username string) ([]GitHubRepo, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
-
+func (s *Service) getRepos(ctx context.Context, username string) ([]*github.Repository, error) {
 	opt := &github.RepositoryListOptions{
 		ListOptions: github.ListOptions{PerPage: 100},
+		Type:        "owner",
 		Sort:        "updated",
 		Direction:   "desc",
 	}
 
 	var allRepos []*github.Repository
 	for {
-		repos, resp, err := g.client.Repositories.List(ctx, username, opt)
+		repos, resp, err := s.client.Repositories.List(ctx, username, opt)
 		if err != nil {
 			return nil, err
 		}
@@ -97,138 +85,112 @@ func (g *GitHubService) fetchUserRepos(username string) ([]GitHubRepo, error) {
 		}
 		opt.Page = resp.NextPage
 	}
-
-	var result []GitHubRepo
-	for _, repo := range allRepos {
-		result = append(result, GitHubRepo{
-			Name:            repo.GetName(),
-			StargazersCount: repo.GetStargazersCount(),
-			ForksCount:      repo.GetForksCount(),
-			Language:        repo.GetLanguage(),
-			UpdatedAt:       repo.GetUpdatedAt().Time,
-		})
-	}
-
-	return result, nil
+	return allRepos, nil
 }
 
-func (g *GitHubService) calculateMostActiveDay(username string, repos []GitHubRepo) string {
-	ctx, cancel := context.WithTimeout(context.Background(), 25*time.Second)
-	defer cancel()
-
+func (s *Service) calcStats(ctx context.Context, username string, repos []*github.Repository) *Stats {
+	stats := &Stats{}
+	langs := make(map[string]int)
 	dayCounts := make(map[string]int)
-	since := time.Now().AddDate(0, -3, 0)
+	commitCounts := make(map[string]int)
+
+	since30d := time.Now().AddDate(0, 0, -30)
+	since90d := time.Now().AddDate(0, -3, 0)
 
 	for _, repo := range repos {
-		commits, _, err := g.client.Repositories.ListCommits(ctx, username, repo.Name, &github.CommitsListOptions{
-			Author: username,
-			Since:  since,
-			ListOptions: github.ListOptions{
-				PerPage: 100,
-			},
-		})
+		stats.Stars += repo.GetStargazersCount()
+		stats.Forks += repo.GetForksCount()
+		stats.RepoCount++
 
-		if err != nil {
-			continue
+		if lang := repo.GetLanguage(); lang != "" {
+			langs[lang]++
 		}
 
-		for _, commit := range commits {
-			if commit.Commit != nil && commit.Commit.Author != nil && commit.Commit.Author.Date != nil {
-				day := commit.Commit.Author.Date.Weekday().String()
-				dayCounts[day]++
+		if repo.GetUpdatedAt().After(since90d) {
+			commits, _, err := s.client.Repositories.ListCommits(ctx, username,
+				repo.GetName(), &github.CommitsListOptions{
+					Author:      username,
+					Since:       since90d,
+					ListOptions: github.ListOptions{PerPage: 100},
+				})
+			if err != nil {
+				continue
+			}
+
+			for _, commit := range commits {
+				if commit.Commit != nil && commit.Commit.Author != nil && commit.Commit.Author.Date != nil {
+					date := commit.Commit.Author.Date.Time
+
+					day := date.Weekday().String()
+					dayCounts[day]++
+
+					dateStr := date.Format("2006-01-02")
+					if date.After(since30d) {
+						commitCounts[dateStr]++
+					}
+				}
 			}
 		}
 	}
 
-	if len(dayCounts) == 0 {
+	stats.TopLanguages = getTopLanguages(langs, 3)
+	stats.MostActiveDay = getMaxKey(dayCounts)
+	stats.Commits30d = sumMapValues(commitCounts)
+
+	return stats
+}
+
+func getTopLanguages(langs map[string]int, limit int) string {
+	if len(langs) == 0 {
+		return "No data"
+	}
+
+	type langCount struct {
+		lang  string
+		count int
+	}
+	var counts []langCount
+	for lang, count := range langs {
+		counts = append(counts, langCount{lang, count})
+	}
+
+	sort.Slice(counts, func(i, j int) bool { return counts[i].count > counts[j].count })
+
+	var top []string
+	for i := 0; i < len(counts) && i < limit; i++ {
+		top = append(top, counts[i].lang)
+	}
+	return strings.Join(top, ", ")
+}
+
+func getMaxKey(m map[string]int) string {
+	if len(m) == 0 {
 		return "Unknown"
 	}
-
-	maxDay := ""
-	maxCount := 0
-	for day, count := range dayCounts {
-		if count > maxCount {
-			maxCount = count
-			maxDay = day
+	maxKey := ""
+	maxVal := 0
+	for k, v := range m {
+		if v > maxVal {
+			maxVal = v
+			maxKey = k
 		}
 	}
-
-	return maxDay
+	return maxKey
 }
 
-func (g *GitHubService) calculateCommits30d(username string, repos []GitHubRepo) int {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
-
-	since := time.Now().AddDate(0, 0, -30)
-	totalCommits := 0
-
-	for _, repo := range repos {
-		commits, _, err := g.client.Repositories.ListCommits(ctx, username, repo.Name, &github.CommitsListOptions{
-			Author: username,
-			Since:  since,
-			ListOptions: github.ListOptions{
-				PerPage: 100,
-			},
-		})
-
-		if err != nil {
-			continue
-		}
-
-		totalCommits += len(commits)
+func sumMapValues(m map[string]int) int {
+	total := 0
+	for _, v := range m {
+		total += v
 	}
-
-	return totalCommits
+	return total
 }
 
-func (g *GitHubService) CalculateStats(repos []GitHubRepo) (int, int, string) {
-	totalStars := 0
-	totalForks := 0
-	languages := make(map[string]int)
-
-	if len(repos) > 0 {
-		for _, repo := range repos {
-			totalStars += repo.StargazersCount
-			totalForks += repo.ForksCount
-			if repo.Language != "" {
-				languages[repo.Language]++
-			}
-		}
-	}
-
-	topLanguages := "No data"
-	if len(languages) > 0 {
-		type langCount struct {
-			lang  string
-			count int
-		}
-		var langCounts []langCount
-		for lang, count := range languages {
-			langCounts = append(langCounts, langCount{lang, count})
-		}
-
-		sort.Slice(langCounts, func(i, j int) bool {
-			return langCounts[i].count > langCounts[j].count
-		})
-
-		var topLangs []string
-		for i := 0; i < len(langCounts) && i < 3; i++ {
-			topLangs = append(topLangs, langCounts[i].lang)
-		}
-
-		if len(topLangs) > 0 {
-			topLanguages = strings.Join(topLangs, ", ")
-		}
-	}
-
-	return totalStars, totalForks, topLanguages
-}
-
-func (g *GitHubService) CheckAPIStatus() (bool, error) {
+func (s *Service) CheckAPI() (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
-	_, _, err := g.client.Users.Get(ctx, "github")
+	_, _, err := s.client.Users.Get(ctx, "github")
 	return err == nil, err
 }
+
+func (s *Service) Authed() bool { return s.authed }

@@ -38,7 +38,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	githubService := github.NewGitHubService()
+	githubService := github.NewService()
 	cacheManager := cache.NewGitHubCacheManager(githubService)
 	receiptHandler := handlers.NewReceiptHandler(cacheManager, templateContent, servers)
 
@@ -62,11 +62,11 @@ func main() {
 		Format: "[${time}] ${status} - ${method} ${path} - ${latency}\n",
 	}))
 
-	handlers.SetupRoutes(app, receiptHandler, cacheManager)
+	handlers.SetupRoutes(app, receiptHandler, cacheManager, githubService)
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "5000"
+		port = "4000"
 	}
 
 	if err := app.Listen(":" + port); err != nil {

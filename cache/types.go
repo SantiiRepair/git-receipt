@@ -6,13 +6,8 @@ import (
 )
 
 type CachedUserData struct {
-	User          *github.GitHubUser  `json:"user"`
-	Repos         []github.GitHubRepo `json:"repos"`
-	MostActiveDay string              `json:"most_active_day"`
-	TotalStars    int                 `json:"total_stars"`
-	TotalForks    int                 `json:"total_forks"`
-	TopLanguages  string              `json:"top_languages"`
-	Commits30d    int                 `json:"commits_30d"`
-	CachedAt      time.Time           `json:"cached_at"`
-	TTL           time.Duration       `json:"ttl"`
+	User     *github.User
+	Stats    *github.Stats
+	CachedAt time.Time
+	TTL      time.Duration
 }

@@ -9,9 +9,12 @@ import (
 	"santiirepair.dev/git-receipt/github"
 )
 
-func SetupRoutes(app *fiber.App, receiptHandler *ReceiptHandler, cacheManager *cache.GitHubCacheManager) {
-	githubService := github.NewGitHubService()
-
+func SetupRoutes(
+	app *fiber.App,
+	receiptHandler *ReceiptHandler,
+	cacheManager *cache.GitHubCacheManager,
+	githubService *github.Service,
+) {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{
 			"message":           "Not Found",
@@ -20,7 +23,7 @@ func SetupRoutes(app *fiber.App, receiptHandler *ReceiptHandler, cacheManager *c
 	})
 
 	app.Get("/ping", func(c *fiber.Ctx) error {
-		_, err := githubService.CheckAPIStatus()
+		_, err := githubService.CheckAPI()
 		githubStatus := "ok"
 		if err != nil {
 			githubStatus = "error"

@@ -31,7 +31,7 @@ func (h *ReceiptHandler) GenerateReceipt(username string) (string, error) {
 	}
 
 	user := cachedData.User
-	contributionScore := user.PublicRepos*3 + user.Followers*2 + cachedData.TotalStars
+	contributionScore := user.PublicRepos*3 + user.Followers*2 + cachedData.Stats.Stars
 
 	now := time.Now()
 	data := ReceiptData{
@@ -40,13 +40,13 @@ func (h *ReceiptHandler) GenerateReceipt(username string) (string, error) {
 		OrderNumber:       fmt.Sprintf("%04d", rand.Intn(10000)),
 		CustomerName:      user.Name,
 		PublicRepos:       user.PublicRepos,
-		TotalStars:        cachedData.TotalStars,
-		TotalForks:        cachedData.TotalForks,
+		TotalStars:        cachedData.Stats.Stars,
+		TotalForks:        cachedData.Stats.Forks,
 		Followers:         user.Followers,
 		Following:         user.Following,
-		TopLanguages:      cachedData.TopLanguages,
-		MostActiveDay:     cachedData.MostActiveDay,
-		Commits30d:        cachedData.Commits30d,
+		TopLanguages:      cachedData.Stats.TopLanguages,
+		MostActiveDay:     cachedData.Stats.MostActiveDay,
+		Commits30d:        cachedData.Stats.Commits30d,
 		ContributionScore: contributionScore,
 		ServerName:        h.servers[rand.Intn(len(h.servers))],
 		TimeString:        now.Format("3:04:05 PM"),

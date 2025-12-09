@@ -10,17 +10,17 @@ import (
 
 type GitHubCacheManager struct {
 	cache         *ristretto.Cache
-	githubService *github.GitHubService
+	githubService *github.Service
 }
 
-func NewGitHubCacheManager(githubService *github.GitHubService) *GitHubCacheManager {
+func NewGitHubCacheManager(githubService *github.Service) *GitHubCacheManager {
 	cache, err := ristretto.NewCache(&ristretto.Config{
 		NumCounters: 1e6,
 		MaxCost:     1e6,
 		BufferItems: 64,
 		Metrics:     true,
 	})
-	
+
 	if err != nil {
 		log.Fatalf("Failed to create cache: %v", err)
 	}
@@ -31,7 +31,7 @@ func NewGitHubCacheManager(githubService *github.GitHubService) *GitHubCacheMana
 	}
 }
 
-func (g *GitHubCacheManager) calculateTTL(username string, user *github.GitHubUser) time.Duration {
+func (g *GitHubCacheManager) calculateTTL(username string, user *github.User) time.Duration {
 	baseTTL := 30 * time.Minute
 
 	if user.Followers > 1000 || user.PublicRepos > 50 {
@@ -48,44 +48,29 @@ func (g *GitHubCacheManager) calculateTTL(username string, user *github.GitHubUs
 func (g *GitHubCacheManager) GetUserData(username string) (*CachedUserData, error) {
 	if cached, found := g.cache.Get(username); found {
 		cachedData := cached.(*CachedUserData)
-
 		if time.Since(cachedData.CachedAt) < cachedData.TTL {
 			return cachedData, nil
 		}
 	}
 
-	userData, err := g.fetchFreshUserData(username)
+	user, stats, err := g.githubService.GetUserStats(username)
 	if err != nil {
 		return nil, err
 	}
 
-	userData.TTL = g.calculateTTL(username, userData.User)
-	userData.CachedAt = time.Now()
+	userData := &CachedUserData{
+		User:     user,
+		Stats:    stats,
+		CachedAt: time.Now(),
+	}
 
-	cost := int64(len(userData.User.Login) + len(userData.User.Name) +
-		len(userData.TopLanguages) + (len(userData.Repos) * 100))
+	userData.TTL = g.calculateTTL(username, user)
+	cost := int64(len(user.Login) + len(user.Name) +
+		len(stats.TopLanguages) + (stats.RepoCount * 50))
 
 	g.cache.SetWithTTL(username, userData, cost, userData.TTL)
 
 	return userData, nil
-}
-
-func (g *GitHubCacheManager) fetchFreshUserData(username string) (*CachedUserData, error) {
-	user, repos, mostActiveDay, totalStars, totalForks, topLanguages, commits30d, err := g.githubService.GetUserAndRepos(username)
-	if err != nil {
-		return nil, err
-	}
-
-	return &CachedUserData{
-		User:          user,
-		Repos:         repos,
-		MostActiveDay: mostActiveDay,
-		TotalStars:    totalStars,
-		TotalForks:    totalForks,
-		TopLanguages:  topLanguages,
-		Commits30d:    commits30d,
-		CachedAt:      time.Now(),
-	}, nil
 }
 
 func (g *GitHubCacheManager) GetCacheMetrics() map[string]interface{} {
@@ -97,4 +82,39 @@ func (g *GitHubCacheManager) GetCacheMetrics() map[string]interface{} {
 		"keys_added": metrics.KeysAdded(),
 		"cost_added": metrics.CostAdded(),
 	}
+}
+
+func (c *CachedUserData) GetMostActiveDay() string {
+	if c.Stats == nil {
+		return "Unknown"
+	}
+	return c.Stats.MostActiveDay
+}
+
+func (c *CachedUserData) GetTotalStars() int {
+	if c.Stats == nil {
+		return 0
+	}
+	return c.Stats.Stars
+}
+
+func (c *CachedUserData) GetTotalForks() int {
+	if c.Stats == nil {
+		return 0
+	}
+	return c.Stats.Forks
+}
+
+func (c *CachedUserData) GetTopLanguages() string {
+	if c.Stats == nil {
+		return "No data"
+	}
+	return c.Stats.TopLanguages
+}
+
+func (c *CachedUserData) GetCommits30d() int {
+	if c.Stats == nil {
+		return 0
+	}
+	return c.Stats.Commits30d
 }
