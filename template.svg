@@ -17,57 +17,57 @@
     
     <ellipse cx="270" cy="140" rx="30" ry="40" transform="rotate(15 270 140)" class="coffee-stain"/>
     
-    <text x="160" y="40" class="text text-bold text-center" font-size="16">GITHUB RECEIPT</text>
-    <text x="160" y="55" class="text text-center" font-size="11">{{.FormattedDate}}</text>
-    <text x="160" y="70" class="text text-center opacity-75" font-size="10">ORDER # {{.OrderNumber}}</text>
+    <text x="160" y="40" class="text text-bold text-center" font-size="18">GITHUB RECEIPT</text>
+    <text x="160" y="55" class="text text-center" font-size="14">{{.FormattedDate}}</text>
+    <text x="160" y="70" class="text text-center opacity-75" font-size="13">ORDER # {{.OrderNumber}}</text>
     
     <text x="20" y="95" class="text text-bold" font-size="12">CUSTOMER: {{.CustomerName}}</text>
-    <text x="20" y="110" class="text opacity-75" font-size="11">@{{.Username}}</text>
+    <text x="20" y="110" class="text opacity-75" font-size="12">@{{.Username}}</text>
     
     <line x1="20" y1="125" x2="300" y2="125" class="dashed-line"/>
     
-    <text x="20" y="145" class="text" font-size="11">REPOSITORIES</text>
-    <text x="300" y="145" class="text text-right" font-size="11">{{.PublicRepos}}</text>
+    <text x="20" y="145" class="text" font-size="12">REPOSITORIES</text>
+    <text x="300" y="145" class="text text-right" font-size="12">{{.PublicRepos}}</text>
     
-    <text x="20" y="160" class="text" font-size="11">STARS EARNED</text>
-    <text x="300" y="160" class="text text-right" font-size="11">{{.TotalStars}}</text>
+    <text x="20" y="160" class="text" font-size="12">STARS EARNED</text>
+    <text x="300" y="160" class="text text-right" font-size="12">{{.TotalStars}}</text>
     
-    <text x="20" y="175" class="text" font-size="11">REPO FORKS</text>
-    <text x="300" y="175" class="text text-right" font-size="11">{{.TotalForks}}</text>
+    <text x="20" y="175" class="text" font-size="12">REPO FORKS</text>
+    <text x="300" y="175" class="text text-right" font-size="12">{{.TotalForks}}</text>
     
-    <text x="20" y="190" class="text" font-size="11">FOLLOWERS</text>
-    <text x="300" y="190" class="text text-right" font-size="11">{{.Followers}}</text>
+    <text x="20" y="190" class="text" font-size="12">FOLLOWERS</text>
+    <text x="300" y="190" class="text text-right" font-size="12">{{.Followers}}</text>
     
-    <text x="20" y="205" class="text" font-size="11">FOLLOWING</text>
-    <text x="300" y="205" class="text text-right" font-size="11">{{.Following}}</text>
+    <text x="20" y="205" class="text" font-size="12">FOLLOWING</text>
+    <text x="300" y="205" class="text text-right" font-size="12">{{.Following}}</text>
     
     <line x1="20" y1="220" x2="300" y2="220" class="dashed-line"/>
     
-    <text x="20" y="240" class="text text-bold" font-size="11">TOP LANGUAGES:</text>
-    <text x="20" y="255" class="text" font-size="11">{{.TopLanguages}}</text>
+    <text x="20" y="240" class="text text-bold" font-size="12">TOP LANGUAGES:</text>
+    <text x="20" y="255" class="text" font-size="12">{{.TopLanguages}}</text>
     
     <line x1="20" y1="275" x2="300" y2="275" class="dashed-line"/>
     
-    <text x="20" y="295" class="text" font-size="11">MOST ACTIVE DAY:</text>
-    <text x="300" y="295" class="text text-right" font-size="11">{{.MostActiveDay}}</text>
+    <text x="20" y="295" class="text" font-size="12">MOST ACTIVE DAY:</text>
+    <text x="300" y="295" class="text text-right" font-size="12">{{.MostActiveDay}}</text>
     
-    <text x="20" y="310" class="text" font-size="11">COMMITS (30d):</text>
-    <text x="300" y="310" class="text text-right" font-size="11">{{.Commits30d}}</text>
+    <text x="20" y="310" class="text" font-size="12">COMMITS (30d):</text>
+    <text x="300" y="310" class="text text-right" font-size="12">{{.Commits30d}}</text>
     
-    <text x="20" y="330" class="text text-bold" font-size="11">CONTRIBUTION SCORE:</text>
-    <text x="300" y="330" class="text text-bold text-right" font-size="11">{{.ContributionScore}}</text>
+    <text x="20" y="330" class="text text-bold" font-size="12">CONTRIBUTION SCORE:</text>
+    <text x="300" y="330" class="text text-bold text-right" font-size="12">{{.ContributionScore}}</text>
     
-    <text x="160" y="360" class="text text-center opacity-75" font-size="10">Served by: {{.ServerName}}</text>
-    <text x="160" y="375" class="text text-center opacity-75" font-size="10">{{.TimeString}}</text>
+    <text x="160" y="360" class="text text-center opacity-75" font-size="11">Served by: {{.ServerName}}</text>
+    <text x="160" y="375" class="text text-center opacity-75" font-size="11">{{.TimeString}}</text>
     
     <line x1="20" y1="395" x2="300" y2="395" class="dashed-line"/>
     
     <text x="160" y="415" class="text text-center text-bold" font-size="12">COUPON CODE: {{.CouponCode}}</text>
-    <text x="160" y="430" class="text text-center opacity-75" font-size="10">Save for your next commit!</text>
+    <text x="160" y="430" class="text text-center opacity-75" font-size="11">Save for your next commit!</text>
     
-    <text x="20" y="460" class="text opacity-75" font-size="10">CARD #: **** **** **** {{.CardYear}}</text>
-    <text x="20" y="475" class="text opacity-75" font-size="10">AUTH CODE: {{.AuthCode}}</text>
-    <text x="20" y="490" class="text opacity-75" font-size="10">CARDHOLDER: {{.Username}}</text>
+    <text x="20" y="460" class="text opacity-75" font-size="11">CARD #: **** **** **** {{.CardYear}}</text>
+    <text x="20" y="475" class="text opacity-75" font-size="11">AUTH CODE: {{.AuthCode}}</text>
+    <text x="20" y="490" class="text opacity-75" font-size="11">CARDHOLDER: {{.Username}}</text>
     
     <text x="160" y="520" class="text text-center text-bold" font-size="12">THANK YOU FOR CODING!</text>
     
@@ -86,5 +86,5 @@
     
     <rect x="0" y="600" width="320" height="100" fill="url(#fadeGradient)"/>
     
-    <text x="160" y="580" class="text text-center opacity-75" font-size="10">github.com/{{.Username}}</text>
+    <text x="160" y="580" class="text text-center opacity-75" font-size="11">github.com/{{.Username}}</text>
 </svg>
