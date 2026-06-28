@@ -30,4 +30,5 @@ Gopkg.toml
 bin/
 
 .env
-*.sum
+.vercel
+.env*
