@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"encoding/json"
 	"log"
 	"os"
@@ -15,12 +16,14 @@ import (
 	"santiirepair.dev/git-receipt/cache"
 	"santiirepair.dev/git-receipt/github"
 	"santiirepair.dev/git-receipt/handlers"
-	"santiirepair.dev/git-receipt/utils"
 )
 
 var (
 	servers = []string{"Grace Hopper", "Alan Turing", "Ada Lovelace", "Tim Berners-Lee", "Linus Torvalds"}
 )
+
+//go:embed template.svg
+var templateFS embed.FS
 
 func init() {
 	err := godotenv.Load()
@@ -32,11 +35,12 @@ func init() {
 }
 
 func main() {
-	templateContent, err := utils.LoadTemplate("template.svg")
+	templateBytes, err := templateFS.ReadFile("template.svg")
 	if err != nil {
 		log.Printf("❌ Error loading template: %v\n", err)
 		os.Exit(1)
 	}
+	templateContent := string(templateBytes)
 
 	githubService := github.NewService()
 	cacheManager := cache.NewGitHubCacheManager(githubService)
