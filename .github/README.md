@@ -35,14 +35,14 @@ So I decided to build my own version from scratch that:
 To use the Github receipt in your profile, simply embed it using the following format:
 
 ```md
-![SantiiRepair's Github stats](https://santiirepair.tail012146.ts.net/SantiiRepair)
+![SantiiRepair's Github stats](https://gh-receipt.vercel.app/SantiiRepair)
 ```
 
 or to use it on your website as an iframe:
 
 ```html
 <iframe
-  src="https://santiirepair.tail012146.ts.net/:username"
+  src="https://gh-receipt.vercel.app/:username"
   width="400"
   height="600"
   frameborder="0"
@@ -55,7 +55,7 @@ Replace :username with the Github username you want to display. For example:
 
 ```html
 <iframe
-  src="https://santiirepair.tail012146.ts.net/octocat"
+  src="https://gh-receipt.vercel.app/octocat"
   width="400"
   height="600"
   frameborder="0"
@@ -65,6 +65,6 @@ Replace :username with the Github username you want to display. For example:
 
 ## Showcase
 
-![SantiiRepair's Github stats](https://santiirepair.tail012146.ts.net/SantiiRepair)
+![SantiiRepair's Github stats](https://gh-receipt.vercel.app/SantiiRepair)
 
-Or if you want to see what it looks like, let's look at it using the [Octocat](https://github.com/octocat) as an [example](https://santiirepair.tail012146.ts.net/octocat).
+Or if you want to see what it looks like, let's look at it using the [Octocat](https://github.com/octocat) as an [example](https://gh-receipt.vercel.app/octocat).
