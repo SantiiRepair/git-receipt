@@ -1,13 +1,13 @@
 # Github Receipt 🧾
 
-A receipt-style Github receipt designed to work perfectly as an embeddable iframe, inspired by [git-receipt.com](https://git-receipt.com).
+A receipt-style Github receipt designed to work perfectly as an embeddable iframe, inspired by the original git-receipt.com (now discontinued).
 
 ## The Story Behind This Project
 
 I discovered git-receipt.com and absolutely loved the concept of displaying Github stats in a creative, receipt-style format. However, when I tried to embed it on my personal website as an iframe, it didn't work as expected.
 
 > [!IMPORTANT]
-> According to the official website, the original repository was at [gitreceipt](https://github.com/ankitkr0/gitreceipt), but it appears the creator has either deleted their profile or changed their username, making the original project inaccessible.
+> **Notice**: Both the original website (`git-receipt.com`) and its repository (`github.com/ankitkr0/gitreceipt`) have been discontinued and are currently down. It appears the original creator deleted their Github profile, making the original project and its host entirely inaccessible.
 
 So I decided to build my own version from scratch that:
 
